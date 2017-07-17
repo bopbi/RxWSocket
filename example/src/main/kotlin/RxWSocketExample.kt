@@ -13,29 +13,33 @@ fun main(args : Array<String>) {
             .build()
 
     RxWSocket(OkHttpClient(), request).webSocketFlowable().subscribe {
-        if (it is RxWSOpenEvent) {
-            println("Opened")
-            it.webSocket?.send("Send")
-        }
 
-        if (it is RxWSMessageStringEvent) {
-            println("Message String: " + it.text)
-        }
+        when (it) {
+            is RxWSOpenEvent -> {
+                println("Opened")
+                it?.webSocket?.send("Send Ping")
+            }
 
-        if (it is RxWSMessageByteEvent) {
-            print("Message Byte: " + it.bytes)
-        }
+            is RxWSMessageStringEvent -> {
+                println("Receive Message String: " + it.text)
+            }
 
-        if (it is RxWSClosingEvent) {
-            print("Closing")
-        }
+            is RxWSMessageByteEvent -> {
+                println("Receive Message Byte: " + it.bytes)
+            }
 
-        if (it is RxWSFailureEvent) {
-            print("Failure")
-        }
+            is RxWSClosingEvent -> {
+                println("Closing")
+            }
 
-        if (it is RxWSClosedEvent) {
-            print("Closed")
+            is RxWSFailureEvent -> {
+                println("Failure")
+            }
+
+            is RxWSClosedEvent -> {
+                println("Closed")
+            }
+
         }
     }
 }
