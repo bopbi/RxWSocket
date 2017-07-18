@@ -16,7 +16,7 @@ fun main(args : Array<String>) {
 
         when (it) {
             is RxWSOpenEvent -> {
-                println("Opened")
+                println("Opened Flowable")
                 it?.webSocket?.send("Send Ping")
             }
 

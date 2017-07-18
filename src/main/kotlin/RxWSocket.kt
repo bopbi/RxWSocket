@@ -1,5 +1,6 @@
 import io.reactivex.*
 import io.reactivex.Observable.create
+import io.reactivex.rxkotlin.toSingle
 import okhttp3.*
 import okio.ByteString
 
@@ -17,8 +18,12 @@ class RxWSocket(val client:OkHttpClient, val request: Request) {
     /**
      *
      */
-    fun sendMessage(webSocket: WebSocket, message: String) {
-        webSocket.send(message)
+    fun sendMessage (webSocket: WebSocket, message: String) : Single<Boolean> {
+        return webSocket.send(message).toSingle()
+    }
+
+    fun sendMessageByte (webSocket: WebSocket, messageByte: ByteString) : Single<Boolean> {
+        return webSocket.send(messageByte).toSingle()
     }
 
     fun webSocketFlowable(): Flowable<RxWSEvent> {
@@ -59,7 +64,6 @@ class RxWSocket(val client:OkHttpClient, val request: Request) {
 
     fun webSocketObservable(): Observable<RxWSEvent> {
         return create{
-
 
             client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
