@@ -1,3 +1,4 @@
+import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.TestSubscriber
@@ -8,7 +9,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
 /**
@@ -31,7 +31,7 @@ class RxWSocketTest {
         mockRxWSocket = RxWSocket(mockOkhttp, request)
 
         mockWebSocket = mock(WebSocket::class.java)
-        `when`(mockWebSocket.send("")).thenReturn(true)
+        whenever(mockWebSocket.send("")).thenReturn(true)
     }
 
     @Test
