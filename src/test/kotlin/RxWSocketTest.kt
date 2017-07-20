@@ -281,13 +281,39 @@ class RxWSocketTest {
                     .test()
 
         observer.assertComplete()
+        observer.assertResult(true)
+    }
+
+    @Test
+    fun testFailedSendMessage() {
+        mockWebSocket = mock(WebSocket::class.java)
+        whenever(mockWebSocket.send("")).thenReturn(false)
+
+        val observer = mockRxWSocket.sendMessage(mockWebSocket, "")
+                .test()
+
+        observer.assertComplete()
+        observer.assertResult(false)
     }
 
     @Test
     fun testSendMessageBytes() {
+        whenever(mockWebSocket.send(ByteString.EMPTY)).thenReturn(true)
         val observer = mockRxWSocket.sendMessageByte(mockWebSocket, ByteString.EMPTY)
                 .test()
 
         observer.assertComplete()
+        observer.assertValue(true)
+    }
+
+    @Test
+    fun testFailedSendMessageBytes() {
+        mockWebSocket = mock(WebSocket::class.java)
+        whenever(mockWebSocket.send(ByteString.EMPTY)).thenReturn(false)
+        val observer = mockRxWSocket.sendMessageByte(mockWebSocket, ByteString.EMPTY)
+                .test()
+
+        observer.assertComplete()
+        observer.assertValue(false)
     }
 }
