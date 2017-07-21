@@ -1,5 +1,5 @@
 group 'RxWSocket'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 buildscript {
     ext.kotlin_version = '1.1.2'
@@ -9,14 +9,18 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.novoda:bintray-release:0.5.0'
     }
 }
 
-apply plugin: 'kotlin'
-apply plugin: 'maven-publish'
 
-repositories {
-    jcenter()
+apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
+apply plugin: 'kotlin'
+
+allprojects {
+    repositories {
+        jcenter()
+    }
 }
 
 dependencies {
@@ -33,3 +37,11 @@ task wrapper(type: Wrapper) {
     gradleVersion = '2.14'
 }
 
+publish {
+    userOrg = 'bopbi'
+    groupId = 'com.github.bopbi.rxwsocket'
+    artifactId = 'RxWSocket'
+    publishVersion = '1.0.0'
+    desc = 'RxKotlin wrapper for OKHttp 3 Websocket'
+    website = 'https://github.com/bopbi/RxWSocket'
+}

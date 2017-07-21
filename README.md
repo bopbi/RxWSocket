@@ -4,6 +4,11 @@
 
 Wrapper using RxKotlin for OkHttp
 
+to use with gradle:
+
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.0'
+
+
 License
 --------
 
