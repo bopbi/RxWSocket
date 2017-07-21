@@ -7,6 +7,7 @@ buildscript {
     repositories {
         jcenter()
     }
+
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -16,9 +17,15 @@ apply plugin: 'kotlin'
 
 repositories {
     jcenter()
+
+    maven {
+        url  "http://dl.bintray.com/bopbi/maven"
+    }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile rootProject
+    compile 'com.squareup.okhttp3:okhttp:3.8.1'
+    compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.0'
 }
