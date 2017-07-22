@@ -4,7 +4,7 @@
 
 Wrapper using RxKotlin for OkHttp
 
-to use with gradle:
+the library is hosted on jcenter, to use it please add dependency
 
     compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.0'
 
