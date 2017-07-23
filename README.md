@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/bopbi/RxWSocket/tree/master.svg?style=svg)](https://circleci.com/gh/bopbi/RxWSocket/tree/master)
 
-Wrapper using RxKotlin for OkHttp
+RxKotlin OkHttp WebSocket Wrapper for Kotlin, Java, and Android
 
 the library is hosted on jcenter, to use it please add dependency
 
