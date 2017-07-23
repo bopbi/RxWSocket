@@ -52,6 +52,7 @@ fun main(args : Array<String>) {
 
         if (webSocket != null) {
             rxWSocket.sendMessage(webSocket, "Ping")
+            webSocket.close(1001, "Bye")
         }
 
         // it seems echo didnt support send bytes

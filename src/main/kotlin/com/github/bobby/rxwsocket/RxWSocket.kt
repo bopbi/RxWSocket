@@ -38,7 +38,9 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
 
             override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
                 it.onNext(RxWSFailureEvent(webSocket,t,response))
-                it.onError(t)
+                if (t != null) {
+                    it.onError(t)
+                }
             }
 
             override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
@@ -74,7 +76,9 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
 
                 override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
                     it.onNext(RxWSFailureEvent(webSocket,t,response))
-                    it.onError(t)
+                    if (t != null) {
+                        it.onError(t)
+                    }
                 }
 
                 override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
