@@ -6,7 +6,7 @@ Wrapper using RxKotlin for OkHttp
 
 the library is hosted on jcenter, to use it please add dependency
 
-    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.0'
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.1'
 
 
 License
