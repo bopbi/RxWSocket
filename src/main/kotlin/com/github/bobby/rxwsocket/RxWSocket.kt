@@ -1,3 +1,5 @@
+package com.github.bobby.rxwsocket
+
 import io.reactivex.*
 import io.reactivex.Observable.create
 import io.reactivex.rxkotlin.toSingle
@@ -13,7 +15,7 @@ import okio.ByteString
  * RxWebSocket class
  * @constructor
  */
-class RxWSocket(val client:OkHttpClient, val request: Request) {
+class RxWSocket(val client: OkHttpClient, val request: Request) {
 
     /**
      *

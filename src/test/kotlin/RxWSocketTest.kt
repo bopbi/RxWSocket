@@ -1,3 +1,4 @@
+import com.github.bobby.rxwsocket.*
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
