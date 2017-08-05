@@ -1,7 +1,10 @@
 package com.github.bobby.rxwsocket
 
+import com.sun.xml.internal.ws.api.Cancelable
 import io.reactivex.*
 import io.reactivex.Observable.create
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Cancellable
 import io.reactivex.rxkotlin.toSingle
 import okhttp3.*
 import okio.ByteString
@@ -30,38 +33,65 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
 
     fun webSocketFlowable(mode: BackpressureStrategy): Flowable<RxWSEvent> {
 
+
         val webSocketFlowable : Flowable<RxWSEvent> = Flowable.create({
 
-        client.newWebSocket(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                it.onNext(RxWSOpenEvent(webSocket))
-            }
-
-            override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
-                it.onNext(RxWSFailureEvent(webSocket,t,response))
-                if (t != null) {
-                    it.onError(t)
+            val webSocket = client.newWebSocket(request, object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket?, response: Response?) {
+                    it.onNext(RxWSOpenEvent(webSocket))
                 }
-            }
 
-            override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
-                it.onNext(RxWSClosingEvent(webSocket, code, reason))
-                it.onComplete()
-            }
+                override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
+                    it.onNext(RxWSFailureEvent(webSocket,t,response))
+                    if (t != null) {
+                        it.onError(t)
+                    }
+                }
 
-            override fun onMessage(webSocket: WebSocket?, text: String?) {
-                it.onNext(RxWSMessageStringEvent(webSocket, text))
-            }
+                override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
+                    it.onNext(RxWSClosingEvent(webSocket, code, reason))
+                    it.onComplete()
+                }
 
-            override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
-                it.onNext(RxWSMessageByteEvent(webSocket, bytes))
-            }
+                override fun onMessage(webSocket: WebSocket?, text: String?) {
+                    it.onNext(RxWSMessageStringEvent(webSocket, text))
+                }
 
-            override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-                it.onNext(RxWSClosedEvent(webSocket, code, reason))
-            }
-        })
+                override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
+                    it.onNext(RxWSMessageByteEvent(webSocket, bytes))
+                }
 
+                override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
+                    it.onNext(RxWSClosedEvent(webSocket, code, reason))
+                }
+            })
+
+
+            it.setCancellable({
+
+                val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
+                val closingMessage = "Bye"
+                webSocket?.close(closingCode, closingMessage)
+
+            })
+
+            it.setDisposable(object : Disposable {
+
+                var disposed = false
+
+                override fun isDisposed(): Boolean {
+                    return disposed
+                }
+
+                override fun dispose() {
+                    val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
+                    val closingMessage = "Bye"
+                    if (webSocket != null) {
+                        disposed = webSocket.close(closingCode, closingMessage)
+                    }
+                }
+
+            })
         }, mode)
 
         return webSocketFlowable
@@ -70,7 +100,7 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
     fun webSocketObservable(): Observable<RxWSEvent> {
         return create{
 
-            client.newWebSocket(request, object : WebSocketListener() {
+            val webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
                     it.onNext(RxWSOpenEvent(webSocket))
                 }
@@ -99,6 +129,32 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
                     it.onNext(RxWSClosedEvent(webSocket, code, reason))
                     it.onComplete()
                 }
+            })
+
+            it.setCancellable({
+
+                val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
+                val closingMessage = "Bye"
+                webSocket?.close(closingCode, closingMessage)
+
+            })
+
+            it.setDisposable(object : Disposable {
+
+                var disposed = false
+
+                override fun isDisposed(): Boolean {
+                    return disposed
+                }
+
+                override fun dispose() {
+                    val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
+                    val closingMessage = "Bye"
+                    if (webSocket != null) {
+                        disposed = webSocket.close(closingCode, closingMessage)
+                    }
+                }
+
             })
 
         }

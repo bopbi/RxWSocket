@@ -7,8 +7,7 @@ import io.reactivex.subscribers.TestSubscriber
 import okhttp3.*
 import okio.ByteString
 import org.hamcrest.CoreMatchers.instanceOf
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -154,6 +153,26 @@ class RxWSocketTest {
             onNext(mockRxClosedEvent)
             assertValue(mockRxClosedEvent)
         }
+        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
+        assertEquals(subscriber.values().first(), mockRxClosedEvent)
+    }
+
+    @Test
+    fun testFlowableClosedEventByCancel() {
+        val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), 1001, "Bye")
+
+        val subscriber = TestSubscriber<RxWSEvent>().apply {
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(this)
+
+            onNext(mockRxClosedEvent)
+            assertValue(mockRxClosedEvent)
+        }
+
+        subscriber.cancel()
+
+        assertTrue(subscriber.isCancelled)
         assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
         assertEquals(subscriber.values().first(), mockRxClosedEvent)
     }
