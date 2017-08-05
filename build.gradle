@@ -41,7 +41,7 @@ publish {
     userOrg = 'bopbi'
     groupId = 'com.github.bopbi.rxwsocket'
     artifactId = 'RxWSocket'
-    publishVersion = '1.0.2'
+    publishVersion = '1.0.3'
     desc = 'RxKotlin OkHttp WebSocket Wrapper for Kotlin, Java, and Android'
     website = 'https://github.com/bopbi/RxWSocket'
 }

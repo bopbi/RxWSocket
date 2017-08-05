@@ -1,5 +1,6 @@
 import com.github.bobby.rxwsocket.*
 import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.BackpressureStrategy
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subscribers.TestSubscriber
@@ -38,7 +39,7 @@ class RxWSocketTest {
     @Test
     fun testFlowableSubscribed() {
         TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 
@@ -51,7 +52,7 @@ class RxWSocketTest {
 
         val mockRxOpenEvent = RxWSOpenEvent(mock(WebSocket::class.java))
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 
@@ -82,7 +83,7 @@ class RxWSocketTest {
                 .build())
 
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 
@@ -100,7 +101,7 @@ class RxWSocketTest {
         val mockRxClosingEvent = RxWSClosingEvent(mock(WebSocket::class.java), 200, "")
 
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 
@@ -116,7 +117,7 @@ class RxWSocketTest {
         val mockRXMessageStringEvent = RxWSMessageStringEvent(mock(WebSocket::class.java), "")
 
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
             onNext(mockRXMessageStringEvent)
@@ -130,7 +131,7 @@ class RxWSocketTest {
     fun testFlowableMessageByteEvent() {
         val mockRXMessageByteEvent = RxWSMessageByteEvent(mock(WebSocket::class.java), mock(ByteString::class.java))
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 
@@ -146,7 +147,7 @@ class RxWSocketTest {
         val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), 200, "")
 
         val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable()
+            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
                     .subscribeOn(Schedulers.io())
                     .subscribe(this)
 

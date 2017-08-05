@@ -28,8 +28,9 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
         return webSocket.send(messageByte).toSingle()
     }
 
-    fun webSocketFlowable(): Flowable<RxWSEvent> {
-        return Flowable.create({
+    fun webSocketFlowable(mode: BackpressureStrategy): Flowable<RxWSEvent> {
+
+        val webSocketFlowable : Flowable<RxWSEvent> = Flowable.create({
 
         client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket?, response: Response?) {
@@ -58,12 +59,12 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
 
             override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
                 it.onNext(RxWSClosedEvent(webSocket, code, reason))
-                it.onComplete()
             }
         })
 
-        }, BackpressureStrategy.BUFFER)
+        }, mode)
 
+        return webSocketFlowable
     }
 
     fun webSocketObservable(): Observable<RxWSEvent> {

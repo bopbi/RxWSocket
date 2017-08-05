@@ -1,4 +1,5 @@
 import com.github.bobby.rxwsocket.*
+import io.reactivex.BackpressureStrategy
 import okhttp3.OkHttpClient
 import okhttp3.Request
 
@@ -13,34 +14,34 @@ fun main(args : Array<String>) {
             .url("ws://echo.websocket.org/") // use echo websocket test server
             .build()
 
-    RxWSocket(OkHttpClient(), request).webSocketFlowable().subscribe {
+    RxWSocket(OkHttpClient(), request)
+            .webSocketFlowable(BackpressureStrategy.BUFFER)
+            .subscribe {
+                when (it) {
+                    is RxWSOpenEvent -> {
+                        println("Opened Flowable")
+                        it.webSocket?.send("Send Ping")
+                    }
 
-        when (it) {
-            is RxWSOpenEvent -> {
-                println("Opened Flowable")
-                it.webSocket?.send("Send Ping")
-            }
+                    is RxWSMessageStringEvent -> {
+                        println("Receive Message String: " + it.text)
+                    }
 
-            is RxWSMessageStringEvent -> {
-                println("Receive Message String: " + it.text)
-            }
+                    is RxWSMessageByteEvent -> {
+                        println("Receive Message Byte: " + it.bytes)
+                    }
 
-            is RxWSMessageByteEvent -> {
-                println("Receive Message Byte: " + it.bytes)
-            }
+                    is RxWSClosingEvent -> {
+                        println("Closing")
+                    }
 
-            is RxWSClosingEvent -> {
-                println("Closing")
-            }
+                    is RxWSFailureEvent -> {
+                        println("Failure")
+                    }
 
-            is RxWSFailureEvent -> {
-                println("Failure")
-            }
-
-            is RxWSClosedEvent -> {
-                println("Closed")
-            }
-
-        }
+                    is RxWSClosedEvent -> {
+                        println("Closed")
+                    }
+                }
     }
 }
