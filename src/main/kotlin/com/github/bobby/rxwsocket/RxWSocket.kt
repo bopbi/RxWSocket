@@ -1,10 +1,8 @@
 package com.github.bobby.rxwsocket
 
-import com.sun.xml.internal.ws.api.Cancelable
 import io.reactivex.*
 import io.reactivex.Observable.create
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Cancellable
 import io.reactivex.rxkotlin.toSingle
 import okhttp3.*
 import okio.ByteString
