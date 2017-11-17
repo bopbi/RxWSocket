@@ -16,23 +16,20 @@ import okio.ByteString
  * RxWebSocket class
  * @constructor
  */
-class RxWSocket(val client: OkHttpClient, val request: Request) {
+class RxWSocket(private val client: OkHttpClient, private val request: Request) {
 
     /**
      *
      */
-    fun sendMessage (webSocket: WebSocket, message: String) : Single<Boolean> {
-        return webSocket.send(message).toSingle()
-    }
+    fun sendMessage (webSocket: WebSocket, message: String) : Single<Boolean> = webSocket.send(message).toSingle()
 
-    fun sendMessageByte (webSocket: WebSocket, messageByte: ByteString) : Single<Boolean> {
-        return webSocket.send(messageByte).toSingle()
-    }
+    fun sendMessageByte (webSocket: WebSocket, messageByte: ByteString) : Single<Boolean> =
+            webSocket.send(messageByte).toSingle()
 
     fun webSocketFlowable(mode: BackpressureStrategy): Flowable<RxWSEvent> {
 
 
-        val webSocketFlowable : Flowable<RxWSEvent> = Flowable.create({
+        return Flowable.create({
 
             val webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
@@ -92,7 +89,6 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
             })
         }, mode)
 
-        return webSocketFlowable
     }
 
     fun webSocketObservable(): Observable<RxWSEvent> {
@@ -141,9 +137,7 @@ class RxWSocket(val client: OkHttpClient, val request: Request) {
 
                 var disposed = false
 
-                override fun isDisposed(): Boolean {
-                    return disposed
-                }
+                override fun isDisposed(): Boolean = disposed
 
                 override fun dispose() {
                     val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4

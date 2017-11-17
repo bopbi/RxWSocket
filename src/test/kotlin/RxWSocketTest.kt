@@ -1,13 +1,9 @@
 import com.github.bobby.rxwsocket.*
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.BackpressureStrategy
-import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subscribers.TestSubscriber
 import okhttp3.*
 import okio.ByteString
-import org.hamcrest.CoreMatchers.instanceOf
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -23,7 +19,7 @@ class RxWSocketTest {
 
     @Before
     fun setup() {
-        var mockOkhttp : OkHttpClient = mock(OkHttpClient::class.java)
+        val mockOkhttp : OkHttpClient = mock(OkHttpClient::class.java)
         val request = Request.Builder()
                 .get()
                 .url("ws://192.168.0.1:8080/ws")
@@ -37,32 +33,28 @@ class RxWSocketTest {
 
     @Test
     fun testFlowableSubscribed() {
-        TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
 
-            assertSubscribed()
-        }
+        mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                .subscribeOn(Schedulers.trampoline())
+                .observeOn(Schedulers.trampoline())
+                .test()
+                .assertSubscribed()
     }
 
     @Test
     fun testFlowableOpenEvent() {
 
         val mockRxOpenEvent = RxWSOpenEvent(mock(WebSocket::class.java))
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
+        testSubscriber.onNext(mockRxOpenEvent)
 
-            onNext(mockRxOpenEvent)
+        testSubscriber.assertValueAt(0, { it is RxWSOpenEvent})
+        testSubscriber.assertValueAt(0,  {(it as RxWSOpenEvent).equals(mockRxOpenEvent)})
 
-            assertValue(mockRxOpenEvent)
-        }
-
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRxOpenEvent)
     }
 
     @Test
@@ -72,143 +64,134 @@ class RxWSocketTest {
                 .url("ws://192.168.0.1:8080/ws")
                 .build()
 
+        val errorCode = 500
         val mockRxFailureEvent = RxWSFailureEvent(mock(WebSocket::class.java)
                 , mock(Throwable::class.java)
                 , Response.Builder()
                 .request(request)
-                .code(200)
+                .code(errorCode)
                 .message("")
                 .protocol(Protocol.HTTP_1_0)
                 .build())
 
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxFailureEvent)
+        testSubscriber.onNext(mockRxFailureEvent)
 
-            assertValue(mockRxFailureEvent)
-        }
-
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRxFailureEvent)
+        testSubscriber.assertValueAt(0, { it is RxWSFailureEvent})
+        testSubscriber.assertValueAt(0,  { (it as RxWSFailureEvent).response!!.code() == errorCode})
     }
 
     @Test
     fun testFlowableClosingEvent() {
+        val closeCode = 200
         val mockRxClosingEvent = RxWSClosingEvent(mock(WebSocket::class.java), 200, "")
 
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxClosingEvent)
-            assertValue(mockRxClosingEvent)
-        }
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRxClosingEvent)
+        testSubscriber.onNext(mockRxClosingEvent)
+
+        testSubscriber.assertValueAt(0, { it is RxWSClosingEvent})
+        testSubscriber.assertValueAt(0,  { (it as RxWSClosingEvent).code == closeCode})
     }
 
     @Test
     fun testFlowableMessageStringEvent() {
-        val mockRXMessageStringEvent = RxWSMessageStringEvent(mock(WebSocket::class.java), "")
+        val mockString = "test"
+        val mockRXMessageStringEvent = RxWSMessageStringEvent(mock(WebSocket::class.java), mockString)
 
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
-            onNext(mockRXMessageStringEvent)
-            assertValue(mockRXMessageStringEvent)
-        }
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRXMessageStringEvent)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
+
+        testSubscriber.onNext(mockRXMessageStringEvent)
+
+        testSubscriber.assertValueAt(0, { it is RxWSMessageStringEvent })
+        testSubscriber.assertValueAt(0, { (it as RxWSMessageStringEvent).text.equals(mockString) })
+
     }
 
     @Test
     fun testFlowableMessageByteEvent() {
-        val mockRXMessageByteEvent = RxWSMessageByteEvent(mock(WebSocket::class.java), mock(ByteString::class.java))
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val byteStringMock = mock(ByteString::class.java)
+        val mockRXMessageByteEvent = RxWSMessageByteEvent(mock(WebSocket::class.java), byteStringMock)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRXMessageByteEvent)
-            assertValue(mockRXMessageByteEvent)
-        }
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRXMessageByteEvent)
+        testSubscriber.onNext(mockRXMessageByteEvent)
+
+        testSubscriber.assertValueAt(0, { it is RxWSMessageByteEvent })
+        testSubscriber.assertValueAt(0, { (it as RxWSMessageByteEvent).bytes == byteStringMock })
     }
 
     @Test
     fun testFlowableClosedEvent() {
-        val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), 200, "")
+        val closeCode = 200
+        val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), closeCode, "")
 
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testSubscriber =  mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxClosedEvent)
-            assertValue(mockRxClosedEvent)
-        }
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRxClosedEvent)
+        testSubscriber.onNext(mockRxClosedEvent)
+
+        testSubscriber.assertValueAt(0, { it is RxWSClosedEvent})
+        testSubscriber.assertValueAt(0,  { (it as RxWSClosedEvent).code == closeCode})
     }
 
     @Test
     fun testFlowableClosedEventByCancel() {
         val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), 1001, "Bye")
 
-        val subscriber = TestSubscriber<RxWSEvent>().apply {
-            mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testSubscriber = mockRxWSocket.webSocketFlowable(BackpressureStrategy.BUFFER)
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxClosedEvent)
-            assertValue(mockRxClosedEvent)
-        }
+        testSubscriber.onNext(mockRxClosedEvent)
 
-        subscriber.cancel()
+        testSubscriber.cancel()
 
-        assertTrue(subscriber.isCancelled)
-        assertThat(subscriber.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(subscriber.values().first(), mockRxClosedEvent)
+        testSubscriber.assertNotComplete()
     }
 
     @Test
     fun testObservableSubscribed() {
-        TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
-
-            assertSubscribed()
-        }
+        mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test().assertSubscribed()
     }
 
     @Test
     fun testObservableOpenEvent() {
 
         val mockRxOpenEvent = RxWSOpenEvent(mock(WebSocket::class.java))
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
 
-            onNext(mockRxOpenEvent)
+        testObserver.onNext(mockRxOpenEvent)
 
-            assertValue(mockRxOpenEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRxOpenEvent)
+        testObserver.assertValueAt(0, { it is RxWSOpenEvent})
     }
 
     @Test
     fun testObservableFailureEvent() {
 
+        val errorCode = 500
         val request = Request.Builder()
                 .get()
                 .url("ws://192.168.0.1:8080/ws")
@@ -217,83 +200,81 @@ class RxWSocketTest {
                 , mock(Throwable::class.java)
                 , Response.Builder()
                 .request(request)
-                .code(200)
+                .code(errorCode)
                 .message("")
                 .protocol(Protocol.HTTP_1_0)
                 .build())
 
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
 
-            onNext(mockRxFailureEvent)
+        testObserver.onNext(mockRxFailureEvent)
 
-            assertValue(mockRxFailureEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRxFailureEvent)
+        testObserver.assertValueAt(0, { it is RxWSFailureEvent})
+        testObserver.assertValueAt(0,  { (it as RxWSFailureEvent).response!!.code() == errorCode})
     }
 
     @Test
     fun testObservableClosingEvent() {
-        val mockRxClosingEvent = RxWSClosingEvent(mock(WebSocket::class.java), 200, "")
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val closeCode = 200
+        val mockRxClosingEvent = RxWSClosingEvent(mock(WebSocket::class.java), closeCode, "")
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxClosingEvent)
-            assertValue(mockRxClosingEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRxClosingEvent)
+        testObserver.onNext(mockRxClosingEvent)
+
+        testObserver.assertValueAt(0, { it is RxWSClosingEvent})
+        testObserver.assertValueAt(0, { (it as RxWSClosingEvent).code == closeCode})
     }
 
     @Test
     fun testObservableMessageStringEvent() {
-        val mockRXMessageStringEvent = RxWSMessageStringEvent(mock(WebSocket::class.java), "")
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val mockString = "test"
+        val mockRXMessageStringEvent = RxWSMessageStringEvent(mock(WebSocket::class.java), mockString)
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRXMessageStringEvent)
-            assertValue(mockRXMessageStringEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRXMessageStringEvent)
+        testObserver.onNext(mockRXMessageStringEvent)
+
+        testObserver.assertValueAt(0, { it is RxWSMessageStringEvent})
+        testObserver.assertValueAt(0, { (it as RxWSMessageStringEvent).text.equals(mockString) })
     }
 
     @Test
     fun testObservableMessageByteEvent() {
-        val mockRXMessageByteEvent = RxWSMessageByteEvent(mock(WebSocket::class.java), mock(ByteString::class.java))
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val mockByteString = mock(ByteString::class.java)
+        val mockRXMessageByteEvent = RxWSMessageByteEvent(mock(WebSocket::class.java), mockByteString)
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRXMessageByteEvent)
-            assertValue(mockRXMessageByteEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRXMessageByteEvent)
+        testObserver.onNext(mockRXMessageByteEvent)
+
+        testObserver.assertValueAt(0, { it is RxWSMessageByteEvent})
+        testObserver.assertValueAt(0, { (it as RxWSMessageByteEvent).bytes == mockByteString })
     }
 
     @Test
     fun testObservableClosedEvent() {
-        val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), 200, "")
-        val observer = TestObserver<RxWSEvent>().apply {
-            mockRxWSocket.webSocketObservable()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(this)
+        val closeCode = 200
+        val mockRxClosedEvent = RxWSClosedEvent(mock(WebSocket::class.java), closeCode, "")
+        val testObserver = mockRxWSocket.webSocketObservable()
+                    .subscribeOn(Schedulers.trampoline())
+                    .observeOn(Schedulers.trampoline())
+                    .test()
 
-            onNext(mockRxClosedEvent)
-            assertValue(mockRxClosedEvent)
-        }
-        assertThat(observer.values().first(), instanceOf(RxWSEvent::class.java))
-        assertEquals(observer.values().first(), mockRxClosedEvent)
+        testObserver.onNext(mockRxClosedEvent)
+
+        testObserver.assertValueAt(0, { it is RxWSClosedEvent})
+        testObserver.assertValueAt(0, { (it as RxWSClosedEvent).code == closeCode})
     }
 
     @Test
