@@ -6,7 +6,7 @@ RxKotlin OkHttp WebSocket Wrapper for Kotlin, Java, and Android
 
 the library is hosted on jcenter, to use it please add dependency
 
-    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.5'
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.6'
 
 
 License

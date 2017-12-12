@@ -3,7 +3,6 @@ package com.github.bobby.rxwsocket
 import io.reactivex.*
 import io.reactivex.Observable.create
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.toSingle
 import okhttp3.*
 import okio.ByteString
 
@@ -21,13 +20,12 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
     /**
      *
      */
-    fun sendMessage (webSocket: WebSocket, message: String) : Single<Boolean> = webSocket.send(message).toSingle()
+    fun sendMessage (webSocket: WebSocket, message: String) : Single<Boolean> = Single.just(webSocket.send(message))
 
     fun sendMessageByte (webSocket: WebSocket, messageByte: ByteString) : Single<Boolean> =
-            webSocket.send(messageByte).toSingle()
+            Single.just(webSocket.send(messageByte))
 
     fun webSocketFlowable(mode: BackpressureStrategy): Flowable<RxWSEvent> {
-
 
         return Flowable.create({
 
