@@ -31,31 +31,31 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
 
             val webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                    it.onNext(RxWSOpenEvent(webSocket))
+                    it.onNext(RxWSEvent.OpenEvent(webSocket))
                 }
 
                 override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
-                    it.onNext(RxWSFailureEvent(webSocket,t,response))
+                    it.onNext(RxWSEvent.FailureEvent(webSocket,t,response))
                     if (t != null) {
                         it.onError(t)
                     }
                 }
 
                 override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
-                    it.onNext(RxWSClosingEvent(webSocket, code, reason))
+                    it.onNext(RxWSEvent.ClosingEvent(webSocket, code, reason))
                     it.onComplete()
                 }
 
                 override fun onMessage(webSocket: WebSocket?, text: String?) {
-                    it.onNext(RxWSMessageStringEvent(webSocket, text))
+                    it.onNext(RxWSEvent.MessageStringEvent(webSocket, text))
                 }
 
                 override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
-                    it.onNext(RxWSMessageByteEvent(webSocket, bytes))
+                    it.onNext(RxWSEvent.MessageByteEvent(webSocket, bytes))
                 }
 
                 override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-                    it.onNext(RxWSClosedEvent(webSocket, code, reason))
+                    it.onNext(RxWSEvent.ClosedEvent(webSocket, code, reason))
                 }
             })
 
@@ -94,31 +94,31 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
 
             val webSocket = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
-                    it.onNext(RxWSOpenEvent(webSocket))
+                    it.onNext(RxWSEvent.OpenEvent(webSocket))
                 }
 
                 override fun onFailure(webSocket: WebSocket?, t: Throwable?, response: Response?) {
-                    it.onNext(RxWSFailureEvent(webSocket,t,response))
+                    it.onNext(RxWSEvent.FailureEvent(webSocket,t,response))
                     if (t != null) {
                         it.onError(t)
                     }
                 }
 
                 override fun onClosing(webSocket: WebSocket?, code: Int, reason: String?) {
-                    it.onNext(RxWSClosingEvent(webSocket, code, reason))
+                    it.onNext(RxWSEvent.ClosingEvent(webSocket, code, reason))
                     it.onComplete()
                 }
 
                 override fun onMessage(webSocket: WebSocket?, text: String?) {
-                    it.onNext(RxWSMessageStringEvent(webSocket, text))
+                    it.onNext(RxWSEvent.MessageStringEvent(webSocket, text))
                 }
 
                 override fun onMessage(webSocket: WebSocket?, bytes: ByteString?) {
-                    it.onNext(RxWSMessageByteEvent(webSocket, bytes))
+                    it.onNext(RxWSEvent.MessageByteEvent(webSocket, bytes))
                 }
 
                 override fun onClosed(webSocket: WebSocket?, code: Int, reason: String?) {
-                    it.onNext(RxWSClosedEvent(webSocket, code, reason))
+                    it.onNext(RxWSEvent.ClosedEvent(webSocket, code, reason))
                     it.onComplete()
                 }
             })
@@ -155,34 +155,35 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
 /**
  *
  */
-sealed class RxWSEvent
+sealed class RxWSEvent {
+    /**
+     *
+     */
+    data class OpenEvent(var webSocket: WebSocket?) : RxWSEvent()
 
-/**
- *
- */
-data class RxWSOpenEvent(var webSocket: WebSocket?) : RxWSEvent()
+    /**
+     *
+     */
+    data class FailureEvent(var webSocket: WebSocket?, var throwable: Throwable?, var response: Response?) : RxWSEvent()
 
-/**
- *
- */
-data class RxWSFailureEvent(var webSocket: WebSocket?, var throwable: Throwable?, var response: Response?) : RxWSEvent()
+    /**
+     *
+     */
+    data class ClosingEvent(var webSocket: WebSocket?, var code: Int, var reason: String?) : RxWSEvent()
 
-/**
- *
- */
-data class RxWSClosingEvent(var webSocket: WebSocket?, var code: Int, var reason: String?) : RxWSEvent()
+    /**
+     * data class when
+     */
+    data class MessageStringEvent(var webSocket: WebSocket?, var text: String?) : RxWSEvent()
 
-/**
- * data class when
- */
-data class RxWSMessageStringEvent(var webSocket: WebSocket?, var text: String?) : RxWSEvent()
+    /**
+     *
+     */
+    data class MessageByteEvent(var webSocket: WebSocket?, var bytes: ByteString?) : RxWSEvent()
 
-/**
- *
- */
-data class RxWSMessageByteEvent(var webSocket: WebSocket?, var bytes: ByteString?) : RxWSEvent()
+    /**
+     *
+     */
+    data class ClosedEvent(var webSocket: WebSocket?, var code: Int, var reason: String?) : RxWSEvent()
+}
 
-/**
- *
- */
-data class RxWSClosedEvent(var webSocket: WebSocket?, var code: Int, var reason: String?) : RxWSEvent()
