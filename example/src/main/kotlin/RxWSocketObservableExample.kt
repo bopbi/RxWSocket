@@ -23,28 +23,28 @@ fun main(args : Array<String>) {
         var webSocket : WebSocket? = null
 
         when (it) {
-            is RxWSOpenEvent -> {
+            is RxWSEvent.OpenEvent -> {
                 println("Opened Observable")
                 webSocket = it.webSocket
             }
 
-            is RxWSMessageStringEvent -> {
+            is RxWSEvent.MessageStringEvent -> {
                 println("Receive Message String: " + it.text)
             }
 
-            is RxWSMessageByteEvent -> {
+            is RxWSEvent.MessageByteEvent -> {
                 println("Receive Message Byte: " + it.bytes)
             }
 
-            is RxWSClosingEvent -> {
+            is RxWSEvent.ClosingEvent -> {
                 println("Closing")
             }
 
-            is RxWSFailureEvent -> {
+            is RxWSEvent.FailureEvent -> {
                 println("Failure")
             }
 
-            is RxWSClosedEvent -> {
+            is RxWSEvent.ClosedEvent -> {
                 println("Closed")
             }
 
