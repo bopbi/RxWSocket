@@ -1,5 +1,5 @@
 group 'RxWSocket'
-version '1.0.6'
+version '1.0.8'
 
 buildscript {
     ext.kotlin_version = '1.2.31'
@@ -42,7 +42,7 @@ publish {
     userOrg = 'bopbi'
     groupId = 'com.github.bopbi.rxwsocket'
     artifactId = 'RxWSocket'
-    publishVersion = '1.0.7'
+    publishVersion = '1.0.8'
     desc = 'RxKotlin OkHttp WebSocket Wrapper for Kotlin, Java, and Android'
     website = 'https://github.com/bopbi/RxWSocket'
 }
