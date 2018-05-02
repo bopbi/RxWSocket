@@ -2,7 +2,6 @@ import com.github.bobby.rxwsocket.*
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
-import okio.ByteString
 
 /**
  * Created by bobbyadiprabowo on 7/15/17.
