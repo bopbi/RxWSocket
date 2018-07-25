@@ -52,8 +52,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRxOpenEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.OpenEvent})
-        testSubscriber.assertValueAt(0,  {(it as RxWSEvent.OpenEvent).equals(mockRxOpenEvent)})
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.OpenEvent}
+        testSubscriber.assertValueAt(0) {(it as RxWSEvent.OpenEvent).equals(mockRxOpenEvent)}
 
     }
 
@@ -81,8 +81,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRxFailureEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.FailureEvent})
-        testSubscriber.assertValueAt(0,  { (it as RxWSEvent.FailureEvent).response!!.code() == errorCode})
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.FailureEvent}
+        testSubscriber.assertValueAt(0) { (it as RxWSEvent.FailureEvent).response!!.code() == errorCode}
     }
 
     @Test
@@ -97,8 +97,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRxClosingEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.ClosingEvent})
-        testSubscriber.assertValueAt(0,  { (it as RxWSEvent.ClosingEvent).code == closeCode})
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.ClosingEvent}
+        testSubscriber.assertValueAt(0) { (it as RxWSEvent.ClosingEvent).code == closeCode}
     }
 
     @Test
@@ -113,8 +113,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRXMessageStringEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.MessageStringEvent })
-        testSubscriber.assertValueAt(0, { (it as RxWSEvent.MessageStringEvent).text.equals(mockString) })
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.MessageStringEvent }
+        testSubscriber.assertValueAt(0) { (it as RxWSEvent.MessageStringEvent).text.equals(mockString) }
 
     }
 
@@ -129,8 +129,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRXMessageByteEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.MessageByteEvent })
-        testSubscriber.assertValueAt(0, { (it as RxWSEvent.MessageByteEvent).bytes == byteStringMock })
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.MessageByteEvent }
+        testSubscriber.assertValueAt(0) { (it as RxWSEvent.MessageByteEvent).bytes == byteStringMock }
     }
 
     @Test
@@ -145,8 +145,8 @@ class RxWSocketTest {
 
         testSubscriber.onNext(mockRxClosedEvent)
 
-        testSubscriber.assertValueAt(0, { it is RxWSEvent.ClosedEvent})
-        testSubscriber.assertValueAt(0,  { (it as RxWSEvent.ClosedEvent).code == closeCode})
+        testSubscriber.assertValueAt(0) { it is RxWSEvent.ClosedEvent}
+        testSubscriber.assertValueAt(0) { (it as RxWSEvent.ClosedEvent).code == closeCode}
     }
 
     @Test
@@ -185,7 +185,7 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRxOpenEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.OpenEvent})
+        testObserver.assertValueAt(0) { it is RxWSEvent.OpenEvent}
     }
 
     @Test
@@ -213,8 +213,8 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRxFailureEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.FailureEvent})
-        testObserver.assertValueAt(0,  { (it as RxWSEvent.FailureEvent).response!!.code() == errorCode})
+        testObserver.assertValueAt(0) { it is RxWSEvent.FailureEvent}
+        testObserver.assertValueAt(0) { (it as RxWSEvent.FailureEvent).response!!.code() == errorCode}
     }
 
     @Test
@@ -228,8 +228,8 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRxClosingEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.ClosingEvent})
-        testObserver.assertValueAt(0, { (it as RxWSEvent.ClosingEvent).code == closeCode})
+        testObserver.assertValueAt(0) { it is RxWSEvent.ClosingEvent}
+        testObserver.assertValueAt(0) { (it as RxWSEvent.ClosingEvent).code == closeCode}
     }
 
     @Test
@@ -243,8 +243,8 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRXMessageStringEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.MessageStringEvent})
-        testObserver.assertValueAt(0, { (it as RxWSEvent.MessageStringEvent).text.equals(mockString) })
+        testObserver.assertValueAt(0) { it is RxWSEvent.MessageStringEvent}
+        testObserver.assertValueAt(0) { (it as RxWSEvent.MessageStringEvent).text.equals(mockString) }
     }
 
     @Test
@@ -258,8 +258,8 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRXMessageByteEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.MessageByteEvent})
-        testObserver.assertValueAt(0, { (it as RxWSEvent.MessageByteEvent).bytes == mockByteString })
+        testObserver.assertValueAt(0) { it is RxWSEvent.MessageByteEvent}
+        testObserver.assertValueAt(0) { (it as RxWSEvent.MessageByteEvent).bytes == mockByteString }
     }
 
     @Test
@@ -273,8 +273,8 @@ class RxWSocketTest {
 
         testObserver.onNext(mockRxClosedEvent)
 
-        testObserver.assertValueAt(0, { it is RxWSEvent.ClosedEvent})
-        testObserver.assertValueAt(0, { (it as RxWSEvent.ClosedEvent).code == closeCode})
+        testObserver.assertValueAt(0) { it is RxWSEvent.ClosedEvent}
+        testObserver.assertValueAt(0) { (it as RxWSEvent.ClosedEvent).code == closeCode}
     }
 
     @Test

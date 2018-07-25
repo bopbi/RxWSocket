@@ -1,15 +1,15 @@
 group 'RxWSocket'
-version '1.0.8'
+version '1.0.9'
 
 buildscript {
-    ext.kotlin_version = '1.2.31'
+    ext.kotlin_version = '1.2.51'
 
     repositories {
         jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.novoda:bintray-release:0.7.0'
+        classpath 'com.novoda:bintray-release:0.8.1'
     }
 }
 
@@ -25,7 +25,7 @@ allprojects {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.squareup.okhttp3:okhttp:3.10.0'
+    compile 'com.squareup.okhttp3:okhttp:3.11.0'
     compile 'io.reactivex.rxjava2:rxkotlin:2.2.0'
 
     testCompile "junit:junit:4.12"

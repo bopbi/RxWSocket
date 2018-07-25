@@ -60,13 +60,11 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
             })
 
 
-            it.setCancellable({
-
+            it.setCancellable {
                 val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
                 val closingMessage = "Bye"
                 webSocket?.close(closingCode, closingMessage)
-
-            })
+            }
 
             it.setDisposable(object : Disposable {
 
@@ -123,13 +121,13 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
                 }
             })
 
-            it.setCancellable({
+            it.setCancellable {
 
                 val closingCode = 1001 // see http://tools.ietf.org/html/rfc6455#section-7.4
                 val closingMessage = "Bye"
                 webSocket?.close(closingCode, closingMessage)
 
-            })
+            }
 
             it.setDisposable(object : Disposable {
 
