@@ -1,12 +1,12 @@
 # RxWSocket
 
-[![CircleCI](https://circleci.com/gh/bopbi/RxWSocket/tree/master.svg?style=svg)](https://circleci.com/gh/bopbi/RxWSocket/tree/master)
+[![CircleCI](https://circleci.com/gh/bopbi/RxWSocket/tree/master.svg?style=svg)](https://circleci.com/gh/bopbi/RxWSocket/tree/master) [ ![Download](https://api.bintray.com/packages/bopbi/maven/RxWSocket/images/download.svg) ](https://bintray.com/bopbi/maven/RxWSocket/_latestVersion)
 
 RxKotlin OkHttp WebSocket Wrapper for Kotlin, Java, and Android
 
 the library is hosted on jcenter, to use it please add dependency
 
-    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.9'
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:latest-version'
 
 
 License
