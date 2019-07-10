@@ -1,6 +1,6 @@
 import com.github.bobby.rxwsocket.*
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.BackpressureStrategy
 import io.reactivex.schedulers.Schedulers
 import okhttp3.*
@@ -15,15 +15,16 @@ import org.mockito.Mockito.mock
 
 class RxWSocketTest {
 
-    lateinit var mockRxWSocket: RxWSocket
-    lateinit var mockWebSocket: WebSocket
+    private lateinit var mockRxWSocket: RxWSocket
+    private lateinit var mockWebSocket: WebSocket
+    private val dummyUrl = "ws://192.168.0.1:8080/ws"
 
     @Before
     fun setup() {
         val mockOkhttp : OkHttpClient = mock()
         val request = Request.Builder()
                 .get()
-                .url("ws://192.168.0.1:8080/ws")
+                .url(dummyUrl)
                 .build()
 
         mockRxWSocket = RxWSocket(mockOkhttp, request)
@@ -62,7 +63,7 @@ class RxWSocketTest {
     fun testFlowableFailureEvent() {
         val request = Request.Builder()
                 .get()
-                .url("ws://192.168.0.1:8080/ws")
+                .url(dummyUrl)
                 .build()
 
         val errorCode = 500

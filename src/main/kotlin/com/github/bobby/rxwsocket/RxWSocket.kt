@@ -1,7 +1,9 @@
 package com.github.bobby.rxwsocket
 
-import io.reactivex.*
-import io.reactivex.Observable.create
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.Disposable
 import okhttp3.*
 import okio.ByteString
@@ -29,7 +31,7 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
 
         return Flowable.create({ flowable ->
 
-            val webSocket = client.newWebSocket(request, object : WebSocketListener() {
+            val webSocket: WebSocket? = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
                     flowable.onNext(RxWSEvent.OpenEvent(webSocket))
                 }
@@ -89,9 +91,9 @@ class RxWSocket(private val client: OkHttpClient, private val request: Request) 
     }
 
     fun webSocketObservable(): Observable<RxWSEvent> {
-        return create { observable ->
+        return Observable.create { observable ->
 
-            val webSocket = client.newWebSocket(request, object : WebSocketListener() {
+            val webSocket: WebSocket? = client.newWebSocket(request, object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket?, response: Response?) {
                     observable.onNext(RxWSEvent.OpenEvent(webSocket))
                 }
