@@ -1,21 +1,20 @@
 group 'RxWSocket'
 version '1.0.10'
 
+apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
+apply plugin: 'kotlin'
+
 buildscript {
-    ext.kotlin_version = '1.2.51'
+    ext.kotlin_version = '1.3.21'
 
     repositories {
         jcenter()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.novoda:bintray-release:0.9'
+        classpath 'com.novoda:bintray-release:0.9.1'
     }
 }
-
-
-apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
-apply plugin: 'kotlin'
 
 allprojects {
     repositories {
@@ -34,8 +33,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-reflect:1.2.0"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.14'
+wrapper {
+    gradleVersion = '5.4.1'
 }
 
 publish {
