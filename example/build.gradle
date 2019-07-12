@@ -1,30 +1,19 @@
-group 'RxWSocket'
-version '1.0-SNAPSHOT'
-
-buildscript {
-    ext.kotlin_version = '1.3.41'
-
-    repositories {
-        jcenter()
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id 'java'
 }
 
-apply plugin: 'kotlin'
+group 'RxWSocket'
+version '1.0.20'
+
+sourceCompatibility = 1.8
 
 repositories {
+    mavenCentral()
     jcenter()
-
-    maven {
-        url  "http://dl.bintray.com/bopbi/maven"
-    }
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0-beta.1'
-    implementation 'com.github.bopbi.rxwsocket:RxWSocket:1.0.10'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    compile 'com.github.bopbi.rxwsocket:RxWSocket:1.0.20'
 }

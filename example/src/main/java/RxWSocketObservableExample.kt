@@ -1,4 +1,4 @@
-import com.github.bobby.rxwsocket.*
+
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.WebSocket
@@ -7,7 +7,7 @@ import okhttp3.WebSocket
  * Created by bobbyadiprabowo on 7/15/17.
  */
 
-fun main(args : Array<String>) {
+fun main() {
 
 
     val request = Request.Builder()

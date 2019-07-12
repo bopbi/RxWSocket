@@ -7,7 +7,7 @@ import okhttp3.Request
  * Created by bobbyadiprabowo on 7/15/17.
  */
 
-fun main(args : Array<String>) {
+fun main() {
 
     val request = Request.Builder()
             .get()
